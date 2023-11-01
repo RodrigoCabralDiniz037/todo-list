@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="br.edu.unifalmg.repository.FileChoreRepositoryTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-11-01T02:50:53" hostname="RODRIGO--DESKTO" time="1.15">
+  <properties/>
+  <testcase name="#save &gt; When the file is not found or the path is invalid &gt; Throw an IOException" classname="br.edu.unifalmg.repository.FileChoreRepositoryTest" time="1.15"/>
+  <system-out><![CDATA[ERROR: Unable to write the chores on the file.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

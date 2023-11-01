@@ -3,6 +3,9 @@ package br.edu.unifalmg.service;
 import br.edu.unifalmg.domain.Chore;
 import br.edu.unifalmg.enumerator.ChoreFilter;
 import br.edu.unifalmg.exception.*;
+import br.edu.unifalmg.repository.ChoreRepository;
+import br.edu.unifalmg.repository.impl.FileChoreRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,6 +17,16 @@ import java.util.stream.Collectors;
 public class ChoreService {
 
     private List<Chore> chores;
+
+    private ObjectMapper mapper;
+
+    private ChoreRepository repository;
+
+    public ChoreService(ChoreRepository repository) {
+        chores = new ArrayList<>();
+        mapper = new ObjectMapper().findAndRegisterModules();
+        this.repository = repository;
+    }
 
     public ChoreService() {
         chores = new ArrayList<>();
@@ -130,6 +143,12 @@ public class ChoreService {
         }).collect(Collectors.toList());
     }
 
+    /**
+     * Filter the chores by its status
+     *
+     * @param filter COMPLETED, UNCOMPLETED or ALL
+     * @return A list with the filtered chores
+     */
     public List<Chore> filterChores(ChoreFilter filter) {
         switch (filter) {
             case COMPLETED:
@@ -142,32 +161,24 @@ public class ChoreService {
         }
     }
 
+    /**
+     * Load the chores from the repository.
+     * The repository can return NULL if no chores are found.
+     */
+    public void loadChores() {
+        this.chores = repository.load();
+    }
+
+    /**
+     * Save the chores into the file
+     *
+     * @return TRUE, if the saved was completed and <br/>
+     *         FALSE, when the save fails
+     */
+    public Boolean saveChores() {
+        return repository.save(this.chores);
+    }
+
     private final Predicate<List<Chore>> isChoreListEmpty = choreList -> choreList.isEmpty();
 
-    void listsChores(ChoreService service){
-        if(service.getChores().isEmpty()){
-            throw new EmptyChoreListException("It Chore is Empty");
-        }
-        for(int i = 0; i < service.getChores().size(); i++) {
-            System.out.println("Description: " + service.getChores().get(i).getDescription() +
-                    "DeadLine: " + service.getChores().get(i).getDeadline() +
-                    "Status: " + service.getChores().get(i).getIsCompleted());
-        }
-    }
-    public Chore editChore(ChoreService service,int i,Chore chore){
-        if(!(service.getChores().size()==0)){
-            if(!(chore.getIsCompleted()==null)){
-                service.getChores().get(i).setIsCompleted(chore.getIsCompleted());
-            }
-            if(!(chore.getDescription()==null)){
-                service.getChores().get(i).setDescription(chore.getDescription());
-            }
-            if(!(chore.getDeadline()==null)){
-                service.getChores().get(i).setDeadline(chore.getDeadline());
-            }
-        }else{
-            throw new EmptyChoreListException("No Have Chores");
-        }
-        return service.getChores().get(i);
-    }
 }
